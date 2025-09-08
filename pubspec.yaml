@@ -1,0 +1,63 @@
+name: ppe_mobile
+description: "A new Flutter project."
+# The following line prevents the package from being accidentally published to
+# pub.dev using `flutter pub publish`. This is preferred for private packages.
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.7.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # The following adds the Cupertino Icons font to your application.
+  # Use with the CupertinoIcons class for iOS style icons.
+  cupertino_icons: ^1.0.8
+  shared_preferences: ^2.2.2
+  http: ^0.13.6
+  http_parser: ^4.0.2
+  image_picker: ^1.0.4
+  record: ^6.0.0
+  path_provider: ^2.0.15
+  google_fonts: ^4.0.4
+  animate_do: ^3.0.2
+  lottie: ^2.3.2
+  flutter_local_notifications: ^18.0.1
+  flutter_native_splash: ^2.3.6
+  geolocator: ^10.1.0
+  url_launcher: ^6.1.7
+  pdf: ^3.10.4
+  printing: ^5.11.0
+  open_file: ^3.3.2
+  flutter_chat_ui: ^1.6.6
+  flutter_chat_types: ^3.4.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^5.0.0
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter packages.
+flutter:
+  # The following line ensures that the Material Icons font is
+  # included with your application, so that you can use the icons in
+  # the material Icons class.
+  uses-material-design: true
+
+  # To add assets to your application, add an assets section, like this:
+  assets:
+    - assets/images/
+
+flutter_native_splash:
+  color: "#ffffff"
+  image: assets/images/welcome.png
+  android: true
+  ios: true
+  web: false

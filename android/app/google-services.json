@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "728391731096",
+    "project_id": "ppe-mobile-1bd98",
+    "storage_bucket": "ppe-mobile-1bd98.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:728391731096:android:6ace79a83dd39ca6498ded",
+        "android_client_info": {
+          "package_name": "com.example.ppe_mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDfIQz0lDKye8hooBFfOnuPshcK149ViDY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
