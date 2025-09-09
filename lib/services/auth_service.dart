@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:ppe_mobile/services/api_service.dart';
 class AuthService {
-  static const String baseUrl = "http://10.0.201.34:8080/api/auth";
+  static const String baseUrl = "${ApiService.baseUrl}/api/auth";
   static const String _tokenKey = 'jwt_token';
   static const String _userKey = 'user_data';
 
@@ -41,34 +41,53 @@ class AuthService {
           final jsonResponse = json.decode(response.body);
           print(' JSON décodé avec succès: $jsonResponse');
 
-          // Gérer la structure ApiResponse si elle existe
+          // Gérer la structure LoginResponse du backend
           Map<String, dynamic> responseData;
           if (jsonResponse['success'] != null) {
             // Structure ApiResponse
             responseData = jsonResponse['data'] ?? jsonResponse;
-            print(' Structure ApiResponse détectée');
+            print('📊 Structure ApiResponse détectée');
           } else {
-            // Structure directe
+            // Structure directe LoginResponse
             responseData = jsonResponse;
-            print(' Structure directe détectée');
+            print('📊 Structure LoginResponse directe détectée');
           }
 
+          // Extraire les champs selon LoginResponse
           final token = responseData['token'];
           final expiresIn = responseData['expiresIn'];
+          final trackingId = responseData['trackingId'];
+          final nom = responseData['nom'];
+          final prenom = responseData['prenom'];
+          final email = responseData['email'];
+          final numero = responseData['numero'];
           final role = responseData['role'];
+          final adresse = responseData['adresse'];
+          final cni = responseData['cni'];
+          final dateNaissance = responseData['dateNaissance'];
 
           if (token != null) {
             print('🔑 Token trouvé: ${token.substring(0, 20)}...');
             print('👤 Rôle détecté: $role');
+            print('📧 Email: $email');
 
             // Sauvegarder le token
             await saveToken(token);
 
-            // Récupérer les informations complètes du profil
-            Map<String, dynamic> completeUserData = await getCompleteUserData(
-              token,
-              responseData,
-            );
+            // Créer les données utilisateur complètes selon LoginResponse
+            Map<String, dynamic> completeUserData = {
+              'token': token,
+              'expiresIn': expiresIn,
+              'trackingId': trackingId,
+              'nom': nom ?? '',
+              'prenom': prenom ?? '',
+              'email': email ?? '',
+              'numero': numero ?? 0,
+              'role': role ?? '',
+              'adresse': adresse ?? '',
+              'cni': cni ?? '',
+              'dateNaissance': dateNaissance ?? '',
+            };
 
             // Sauvegarder les données utilisateur complètes
             await saveUserData(completeUserData);
@@ -78,7 +97,15 @@ class AuthService {
               'success': true,
               'token': token,
               'expiresIn': expiresIn,
+              'trackingId': trackingId,
+              'nom': nom,
+              'prenom': prenom,
+              'email': email,
+              'numero': numero,
               'role': role,
+              'adresse': adresse,
+              'cni': cni,
+              'dateNaissance': dateNaissance,
               'data': completeUserData,
             };
           } else {
@@ -99,28 +126,31 @@ class AuthService {
       } else {
         print('❌ Erreur HTTP: ${response.statusCode}');
 
-        // Essayer de décoder le message d'erreur
+        // Gestion améliorée des erreurs avec messages UX
         try {
           if (response.body.isNotEmpty) {
             final errorResponse = json.decode(response.body);
+            String userMessage = _getUserFriendlyErrorMessage(
+              response.statusCode,
+              errorResponse['message'],
+            );
             return {
               'success': false,
-              'message':
-                  errorResponse['message'] ??
-                  'Erreur de connexion (${response.statusCode})',
+              'message': userMessage,
+              'errorCode': response.statusCode,
             };
           } else {
             return {
               'success': false,
-              'message':
-                  'Erreur de connexion (${response.statusCode}) - Réponse vide',
+              'message': _getUserFriendlyErrorMessage(response.statusCode, null),
+              'errorCode': response.statusCode,
             };
           }
         } catch (e) {
           return {
             'success': false,
-            'message':
-                'Erreur de connexion (${response.statusCode}) - ${response.body}',
+            'message': _getUserFriendlyErrorMessage(response.statusCode, null),
+            'errorCode': response.statusCode,
           };
         }
       }
@@ -184,19 +214,42 @@ class AuthService {
           final jsonResponse = json.decode(response.body);
           print('✅ JSON décodé avec succès: $jsonResponse');
 
-          // Gérer la structure ApiResponse si elle existe
+          // Gérer la structure RegisterResponse du backend
           Map<String, dynamic> responseData;
           if (jsonResponse['success'] != null) {
             // Structure ApiResponse
             responseData = jsonResponse['data'] ?? jsonResponse;
             print('📊 Structure ApiResponse détectée');
           } else {
-            // Structure directe
+            // Structure directe RegisterResponse
             responseData = jsonResponse;
-            print('📊 Structure directe détectée');
+            print('📊 Structure RegisterResponse directe détectée');
           }
 
-          return {'success': true, 'data': responseData};
+          // Extraire les champs selon RegisterResponse
+          final trackingId = responseData['trackingId'];
+          final nom = responseData['nom'];
+          final prenom = responseData['prenom'];
+          final cni = responseData['cni'];
+          final dateNaissance = responseData['dateNaissance'];
+          final email = responseData['email'];
+          final numero = responseData['numero'];
+          final adresse = responseData['adresse'];
+          final role = responseData['role'];
+
+          return {
+            'success': true,
+            'trackingId': trackingId,
+            'nom': nom,
+            'prenom': prenom,
+            'cni': cni,
+            'dateNaissance': dateNaissance,
+            'email': email,
+            'numero': numero,
+            'adresse': adresse,
+            'role': role,
+            'data': responseData,
+          };
         } catch (jsonError) {
           print('❌ Erreur de décodage JSON: $jsonError');
           print('📄 Contenu de la réponse: ${response.body}');
@@ -208,28 +261,40 @@ class AuthService {
       } else {
         print('❌ Erreur HTTP: ${response.statusCode}');
 
-        // Essayer de décoder le message d'erreur
+        // Gestion améliorée des erreurs avec messages UX
         try {
           if (response.body.isNotEmpty) {
             final errorResponse = json.decode(response.body);
+            String userMessage = _getUserFriendlyErrorMessage(
+              response.statusCode,
+              errorResponse['message'],
+              isRegister: true,
+            );
             return {
               'success': false,
-              'message':
-                  errorResponse['message'] ??
-                  'Erreur lors de l\'inscription (${response.statusCode})',
+              'message': userMessage,
+              'errorCode': response.statusCode,
             };
           } else {
             return {
               'success': false,
-              'message':
-                  'Erreur lors de l\'inscription (${response.statusCode}) - Réponse vide',
+              'message': _getUserFriendlyErrorMessage(
+                response.statusCode,
+                null,
+                isRegister: true,
+              ),
+              'errorCode': response.statusCode,
             };
           }
         } catch (e) {
           return {
             'success': false,
-            'message':
-                'Erreur lors de l\'inscription (${response.statusCode}) - ${response.body}',
+            'message': _getUserFriendlyErrorMessage(
+              response.statusCode,
+              null,
+              isRegister: true,
+            ),
+            'errorCode': response.statusCode,
           };
         }
       }
@@ -554,6 +619,61 @@ class AuthService {
       print('🚪 Déconnexion forcée effectuée');
     } catch (e) {
       print('❌ Erreur lors de la déconnexion forcée: $e');
+    }
+  }
+
+  // Méthode pour générer des messages d'erreur conviviaux
+  static String _getUserFriendlyErrorMessage(
+    int statusCode,
+    String? serverMessage, {
+    bool isRegister = false,
+  }) {
+    // Messages spécifiques du serveur
+    if (serverMessage != null) {
+      if (serverMessage.contains('email') && serverMessage.contains('existe')) {
+        return isRegister
+            ? 'Cette adresse email est déjà utilisée. Veuillez en choisir une autre.'
+            : 'Aucun compte trouvé avec cette adresse email.';
+      }
+      if (serverMessage.contains('mot de passe') || serverMessage.contains('password')) {
+        return 'Mot de passe incorrect. Veuillez réessayer.';
+      }
+      if (serverMessage.contains('CNI') && serverMessage.contains('existe')) {
+        return 'Ce numéro de CNI est déjà enregistré.';
+      }
+      if (serverMessage.contains('validation') || serverMessage.contains('invalide')) {
+        return 'Les informations saisies ne sont pas valides. Vérifiez vos données.';
+      }
+    }
+
+    // Messages génériques selon le code de statut
+    switch (statusCode) {
+      case 400:
+        return isRegister
+            ? 'Les informations saisies ne sont pas valides. Vérifiez tous les champs.'
+            : 'Email ou mot de passe incorrect.';
+      case 401:
+        return 'Email ou mot de passe incorrect.';
+      case 403:
+        return 'Accès refusé. Vérifiez vos permissions.';
+      case 404:
+        return isRegister
+            ? 'Service d\'inscription non disponible.'
+            : 'Service de connexion non disponible.';
+      case 409:
+        return 'Un compte existe déjà avec ces informations.';
+      case 422:
+        return 'Les données fournies ne sont pas valides.';
+      case 429:
+        return 'Trop de tentatives. Veuillez patienter avant de réessayer.';
+      case 500:
+        return 'Erreur du serveur. Veuillez réessayer plus tard.';
+      case 503:
+        return 'Service temporairement indisponible. Réessayez dans quelques minutes.';
+      default:
+        return isRegister
+            ? 'Erreur lors de l\'inscription. Veuillez réessayer.'
+            : 'Erreur de connexion. Vérifiez votre connexion internet.';
     }
   }
 }

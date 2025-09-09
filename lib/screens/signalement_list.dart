@@ -350,7 +350,7 @@ class _SignalementListPageState extends State<SignalementListPage> {
                   Icon(Icons.calendar_today, size: 16, color: Colors.grey[600]),
                   const SizedBox(width: 4),
                   Text(
-                    'Créé le ${_formatDate(signalement['dateCreation'])}',
+                    'Créé le ${_formatDate(signalement['createDate'] ?? signalement['dateCreation'])}',
                     style: TextStyle(color: Colors.grey[600], fontSize: 12),
                   ),
                   const Spacer(),

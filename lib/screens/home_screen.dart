@@ -927,7 +927,7 @@ class _HomeScreenState extends State<HomeScreen>
                           status: _getStatusText(
                             signalement['statut'] ?? 'EN_ATTENTE',
                           ),
-                          date: _formatDate(signalement['dateCreation']),
+                          date: _formatDate(signalement['createDate'] ?? signalement['dateCreation']),
                           icon: _getTypeServiceIcon(signalement['typeService']),
                           statusColor: _getStatusColor(
                             signalement['statut'] ?? 'EN_ATTENTE',

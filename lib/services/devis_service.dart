@@ -2,12 +2,13 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
+import 'package:ppe_mobile/services/api_service.dart';
 import 'auth_service.dart';
 import '../models/user.dart';
 import '../models/signalement.dart' as model;
 
 class DevisService {
-  static const String baseUrl = "http://10.0.201.34:8080/api";
+  static const String baseUrl = "${ApiService.baseUrl}";
 
   // Méthode pour obtenir le token JWT
   static Future<String?> _getJwtToken() async {

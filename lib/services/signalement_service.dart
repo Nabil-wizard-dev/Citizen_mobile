@@ -3,10 +3,11 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:path/path.dart' as p;
+import 'package:ppe_mobile/services/api_service.dart';
 import 'auth_service.dart';
 
 class SignalementService {
-  static const String baseUrl = "http://10.0.201.34:8080/api";
+  static const String baseUrl = "${ApiService.baseUrl}";
 
   // Méthode pour obtenir le token JWT
   static Future<String?> _getJwtToken() async {
@@ -21,7 +22,7 @@ class SignalementService {
     List<http.MultipartFile>? files,
   }) async {
     final token = await _getJwtToken();
-    if (token == null) {
+    if (token == null) { 
       throw Exception("Utilisateur non connecté");
     }
 
@@ -85,11 +86,14 @@ class SignalementService {
     }
   }
 
-  // Récupérer tous les signalements
-  static Future<Map<String, dynamic>> getSignalements() async {
+  // Récupérer tous les signalements avec pagination HAL
+  static Future<Map<String, dynamic>> getSignalements({
+    int page = 0,
+    int size = 20,
+  }) async {
     try {
       final response = await _authenticatedRequest(
-        endpoint: '/signalements/all',
+        endpoint: '/signalements?page=$page&size=$size',
         method: 'GET',
       );
 
@@ -100,15 +104,32 @@ class SignalementService {
         try {
           final responseData = json.decode(response.body);
           if (responseData is Map<String, dynamic>) {
-            // Le backend retourne "error": true/false au lieu de "success"
-            if (responseData['error'] != null) {
+            // Gérer la structure HAL (Hypertext Application Language)
+            if (responseData['_embedded'] != null && responseData['_embedded']['signalements'] != null) {
+              final signalements = responseData['_embedded']['signalements'] as List<dynamic>;
+              final pageInfo = responseData['page'] ?? {};
+              
+              return {
+                'success': true,
+                'data': signalements,
+                'pagination': {
+                  'size': pageInfo['size'] ?? size,
+                  'totalElements': pageInfo['totalElements'] ?? signalements.length,
+                  'totalPages': pageInfo['totalPages'] ?? 1,
+                  'number': pageInfo['number'] ?? page,
+                },
+                'message': 'Signalements récupérés avec succès',
+              };
+            }
+            // Fallback pour l'ancienne structure
+            else if (responseData['error'] != null) {
               final isSuccess = responseData['error'] == false;
               return {
                 'success': isSuccess,
                 'message':
                     responseData['message'] ??
                     (isSuccess ? 'Opération réussie' : 'Erreur'),
-                'data': responseData['data'],
+                'data': responseData['data'] ?? [],
               };
             } else if (responseData['success'] != null) {
               return responseData;
@@ -136,21 +157,53 @@ class SignalementService {
           };
         }
       } else {
-        return {
-          'success': false,
-          'message': 'Erreur lors de la récupération des signalements',
-          'raw': response.body,
-        };
+        // Gestion améliorée des erreurs avec messages UX
+        try {
+          if (response.body.isNotEmpty) {
+            final errorResponse = json.decode(response.body);
+            return {
+              'success': false,
+              'message': _getUserFriendlyErrorMessage(
+                response.statusCode,
+                errorResponse['message'],
+                context: 'signalements',
+              ),
+              'errorCode': response.statusCode,
+            };
+          } else {
+            return {
+              'success': false,
+              'message': _getUserFriendlyErrorMessage(
+                response.statusCode,
+                null,
+                context: 'signalements',
+              ),
+              'errorCode': response.statusCode,
+            };
+          }
+        } catch (e) {
+          return {
+            'success': false,
+            'message': _getUserFriendlyErrorMessage(
+              response.statusCode,
+              null,
+              context: 'signalements',
+            ),
+            'errorCode': response.statusCode,
+          };
+        }
       }
     } catch (e) {
       return {'success': false, 'message': 'Erreur: $e'};
     }
   }
 
-  // Récupérer les signalements assignés à un ouvrier
+  // Récupérer les signalements assignés à un ouvrier avec pagination HAL
   static Future<Map<String, dynamic>> getSignalementsByOuvrier(
-    String ouvrierId,
-  ) async {
+    String ouvrierId, {
+    int page = 0,
+    int size = 20,
+  }) async {
     try {
       final token = await _getJwtToken();
       if (token == null) {
@@ -158,7 +211,7 @@ class SignalementService {
       }
 
       final headers = {'Authorization': 'Bearer $token'};
-      final uri = Uri.parse('$baseUrl/signalements/allByOuvrier/$ouvrierId');
+      final uri = Uri.parse('$baseUrl/signalements/allByOuvrier/$ouvrierId?page=$page&size=$size');
 
       final response = await http.get(uri, headers: headers);
 
@@ -173,20 +226,39 @@ class SignalementService {
 
         final responseData = json.decode(response.body);
 
-        // Correction : forcer le succès si message == 'succes' et data est une liste
+        // Gérer la structure HAL (Hypertext Application Language)
         if (responseData is Map<String, dynamic>) {
-          final data = responseData['data'];
-          final isApiSuccess =
-              (responseData['error'] == false) ||
-              (responseData['message'] == 'succes' &&
-                  data != null &&
-                  data is List);
+          if (responseData['_embedded'] != null && responseData['_embedded']['signalements'] != null) {
+            final signalements = responseData['_embedded']['signalements'] as List<dynamic>;
+            final pageInfo = responseData['page'] ?? {};
+            
+            return {
+              'success': true,
+              'data': signalements,
+              'pagination': {
+                'size': pageInfo['size'] ?? size,
+                'totalElements': pageInfo['totalElements'] ?? signalements.length,
+                'totalPages': pageInfo['totalPages'] ?? 1,
+                'number': pageInfo['number'] ?? page,
+              },
+              'message': 'Signalements récupérés avec succès',
+            };
+          }
+          // Fallback pour l'ancienne structure
+          else {
+            final data = responseData['data'];
+            final isApiSuccess =
+                (responseData['error'] == false) ||
+                (responseData['message'] == 'succes' &&
+                    data != null &&
+                    data is List);
 
-          return {
-            'success': isApiSuccess,
-            'data': data ?? [],
-            'message': responseData['message'] ?? '',
-          };
+            return {
+              'success': isApiSuccess,
+              'data': data ?? [],
+              'message': responseData['message'] ?? '',
+            };
+          }
         }
       }
       return {
@@ -728,6 +800,53 @@ class SignalementService {
       }
     } catch (e) {
       return {'success': false, 'message': 'Erreur: $e'};
+    }
+  }
+
+  // Méthode pour générer des messages d'erreur conviviaux
+  static String _getUserFriendlyErrorMessage(
+    int statusCode,
+    String? serverMessage, {
+    String context = 'opération',
+  }) {
+    // Messages spécifiques du serveur
+    if (serverMessage != null) {
+      if (serverMessage.contains('signalement') && serverMessage.contains('existe')) {
+        return 'Ce signalement existe déjà.';
+      }
+      if (serverMessage.contains('fichier') || serverMessage.contains('image')) {
+        return 'Erreur lors du téléchargement des fichiers. Vérifiez le format des images.';
+      }
+      if (serverMessage.contains('permission') || serverMessage.contains('accès')) {
+        return 'Vous n\'avez pas les permissions nécessaires pour cette action.';
+      }
+      if (serverMessage.contains('validation') || serverMessage.contains('invalide')) {
+        return 'Les informations du signalement ne sont pas valides.';
+      }
+    }
+
+    // Messages génériques selon le code de statut
+    switch (statusCode) {
+      case 400:
+        return 'Les données du signalement ne sont pas valides. Vérifiez tous les champs.';
+      case 401:
+        return 'Vous devez être connecté pour effectuer cette action.';
+      case 403:
+        return 'Vous n\'avez pas les permissions nécessaires pour cette action.';
+      case 404:
+        return 'Signalement non trouvé.';
+      case 409:
+        return 'Un signalement similaire existe déjà.';
+      case 422:
+        return 'Les données fournies ne sont pas valides.';
+      case 429:
+        return 'Trop de requêtes. Veuillez patienter avant de réessayer.';
+      case 500:
+        return 'Erreur du serveur. Veuillez réessayer plus tard.';
+      case 503:
+        return 'Service temporairement indisponible. Réessayez dans quelques minutes.';
+      default:
+        return 'Erreur lors de l\'$context. Vérifiez votre connexion internet.';
     }
   }
 }

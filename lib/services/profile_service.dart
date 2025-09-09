@@ -2,11 +2,12 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import 'package:ppe_mobile/services/api_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'auth_service.dart';
 
 class ProfileService {
-  static const String baseUrl = "http://10.0.201.34:8080/api/profile";
+  static const String baseUrl = "${ApiService.baseUrl}/profile";
 
   // Récupérer le token JWT
   static Future<String?> _getJwtToken() async {
