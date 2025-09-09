@@ -11,7 +11,7 @@ class RapportTacheScreen extends StatefulWidget {
 class _RapportTacheScreenState extends State<RapportTacheScreen> {
   final TextEditingController _controller = TextEditingController();
   bool _isLoading = false;
-  List<String> _photos = [];
+  final List<String> _photos = [];
 
   void _ajouterPhoto() async {
     // TODO: Ajouter la logique pour sélectionner une photo

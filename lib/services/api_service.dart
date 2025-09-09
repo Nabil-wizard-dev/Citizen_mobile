@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'auth_service.dart';
 
 class ApiService {
-  static const String baseUrl = "http://192.168.1.70:8080/api";
+  static const String baseUrl = "http://10.0.201.34:8080/api";
 
   // Méthode pour obtenir le token JWT
   static Future<String?> _getJwtToken() async {

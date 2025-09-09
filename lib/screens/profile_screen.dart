@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user.dart';
 import '../services/profile_service.dart';
-import '../services/auth_service.dart';
 
 class ProfileScreen extends StatefulWidget {
   final User user;
   final Function(String?)?
   onProfileUpdated; // Modifier pour accepter l'URL de la photo
 
-  const ProfileScreen({Key? key, required this.user, this.onProfileUpdated})
-    : super(key: key);
+  const ProfileScreen({super.key, required this.user, this.onProfileUpdated});
 
   @override
   _ProfileScreenState createState() => _ProfileScreenState();

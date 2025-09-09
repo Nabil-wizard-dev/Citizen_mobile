@@ -5,7 +5,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
 import 'login.dart';
-import 'notification.dart';
 import '../services/auth_service.dart';
 import '../services/signalement_service.dart';
 import '../models/user.dart';
@@ -15,7 +14,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 class HomeScreen extends StatefulWidget {
   final User user;
-  const HomeScreen({Key? key, required this.user}) : super(key: key);
+  const HomeScreen({super.key, required this.user});
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -292,8 +291,8 @@ class _HomeScreenState extends State<HomeScreen>
                 );
               },
               backgroundColor: Colors.deepPurple,
-              child: const Icon(Icons.smart_toy, color: Colors.white),
               heroTag: 'chatbot',
+              child: const Icon(Icons.smart_toy, color: Colors.white),
             ),
           ),
           Positioned(
@@ -313,8 +312,8 @@ class _HomeScreenState extends State<HomeScreen>
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: const Icon(Icons.add_alert, color: Colors.white),
               heroTag: 'signalement',
+              child: const Icon(Icons.add_alert, color: Colors.white),
             ),
           ),
         ],
@@ -512,16 +511,16 @@ class _HomeScreenState extends State<HomeScreen>
                         ),
                         SizedBox(height: 2),
 
-                        if (widget.user.numero != null) ...[
-                          SizedBox(height: 2),
-                          Text(
-                            "📞 ${widget.user.numero}",
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey[600],
-                            ),
+                        ...[
+                        SizedBox(height: 2),
+                        Text(
+                          "📞 ${widget.user.numero}",
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey[600],
                           ),
-                        ],
+                        ),
+                      ],
                       ],
                     ),
                   ),
@@ -1121,7 +1120,7 @@ class _HomeScreenState extends State<HomeScreen>
                         SizedBox(height: 12),
                         Text('Numéro à composer manuellement :'),
                         Text(
-                          '$phoneNumber',
+                          phoneNumber,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,

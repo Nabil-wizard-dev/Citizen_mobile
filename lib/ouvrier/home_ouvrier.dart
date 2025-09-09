@@ -8,11 +8,10 @@ import '../../models/user.dart';
 import '../screens/login.dart';
 import '../screens/profile_screen.dart';
 import 'package:flutter/services.dart';
-import 'package:http/http.dart' as http;
 
 class HomeOuvrierScreen extends StatefulWidget {
   final User user;
-  const HomeOuvrierScreen({Key? key, required this.user}) : super(key: key);
+  const HomeOuvrierScreen({super.key, required this.user});
 
   @override
   State<HomeOuvrierScreen> createState() => _HomeOuvrierScreenState();

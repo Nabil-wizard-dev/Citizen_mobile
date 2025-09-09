@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'auth_service.dart';
 
 class ProfileService {
-  static const String baseUrl = "http://192.168.1.70:8080/api/profile";
+  static const String baseUrl = "http://10.0.201.34:8080/api/profile";
 
   // Récupérer le token JWT
   static Future<String?> _getJwtToken() async {

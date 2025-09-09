@@ -2,10 +2,11 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
+import 'package:path/path.dart' as p;
 import 'auth_service.dart';
 
 class SignalementService {
-  static const String baseUrl = "http://192.168.1.70:8080/api";
+  static const String baseUrl = "http://10.0.201.34:8080/api";
 
   // Méthode pour obtenir le token JWT
   static Future<String?> _getJwtToken() async {
@@ -233,7 +234,7 @@ class SignalementService {
       }
 
       // Utiliser le nouvel endpoint addInOne qui gère les fichiers
-      final uri = Uri.parse('$baseUrl/signalements/addInOne');
+      final uri = Uri.parse('$baseUrl/signalements/create');
       print('URL de la requête: $uri');
 
       var request = http.MultipartRequest('POST', uri);
@@ -241,13 +242,11 @@ class SignalementService {
 
       print('Headers de la requête: ${request.headers}');
 
-      // Ajouter les données du signalement comme fichier JSON
-      final jsonBytes = utf8.encode(jsonEncode(signalementData));
+      // Ajouter les données du signalement comme champ "request" (application/json)
       request.files.add(
-        http.MultipartFile.fromBytes(
+        http.MultipartFile.fromString(
           'request',
-          jsonBytes,
-          filename: 'signalement.json',
+          jsonEncode(signalementData),
           contentType: MediaType('application', 'json'),
         ),
       );
@@ -255,7 +254,7 @@ class SignalementService {
       // Ajouter les fichiers (obligatoires)
       for (int i = 0; i < images.length; i++) {
         final bytes = await images[i].readAsBytes();
-        final originalName = images[i].path.split('/').last;
+        final originalName = p.basename(images[i].path); // Use path package for cross-platform basename
         final extension = originalName.split('.').last.toLowerCase();
 
         // Déterminer le type MIME basé sur l'extension
@@ -279,7 +278,7 @@ class SignalementService {
           http.MultipartFile.fromBytes(
             'files',
             bytes,
-            filename: originalName,
+            filename: originalName, // Only the filename, not the full path
             contentType: MediaType('image', mimeSubtype),
           ),
         );

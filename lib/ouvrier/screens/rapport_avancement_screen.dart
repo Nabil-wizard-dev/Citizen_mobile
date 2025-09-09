@@ -10,10 +10,10 @@ class RapportAvancementScreen extends StatefulWidget {
   final Signalement signalement;
   final User user;
   const RapportAvancementScreen({
-    Key? key,
+    super.key,
     required this.signalement,
     required this.user,
-  }) : super(key: key);
+  });
 
   @override
   State<RapportAvancementScreen> createState() =>
@@ -29,7 +29,7 @@ class _RapportAvancementScreenState extends State<RapportAvancementScreen> {
       TextEditingController();
   final TextEditingController _dureeController = TextEditingController();
 
-  List<File> _photos = [];
+  final List<File> _photos = [];
   bool _isLoading = false;
   double _pourcentageAvancement = 0.0;
   final ImagePicker _picker = ImagePicker();

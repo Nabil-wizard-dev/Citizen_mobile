@@ -12,10 +12,10 @@ class CreationDevisScreen extends StatefulWidget {
   final User user;
 
   const CreationDevisScreen({
-    Key? key,
+    super.key,
     required this.signalement,
     required this.user,
-  }) : super(key: key);
+  });
 
   @override
   State<CreationDevisScreen> createState() => _CreationDevisScreenState();
@@ -29,7 +29,7 @@ class _CreationDevisScreenState extends State<CreationDevisScreen> {
   final _montantController = TextEditingController();
   final _commentaireController = TextEditingController();
 
-  List<File> _selectedPhotos = [];
+  final List<File> _selectedPhotos = [];
   bool _isLoading = false;
   bool _isGeneratingPdf = false;
   final ImagePicker _picker = ImagePicker();

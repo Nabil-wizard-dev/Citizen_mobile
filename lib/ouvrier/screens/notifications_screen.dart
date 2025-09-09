@@ -4,8 +4,7 @@ import '../services/notification_service.dart';
 
 class NotificationsScreen extends StatefulWidget {
   final String ouvrierId;
-  const NotificationsScreen({Key? key, required this.ouvrierId})
-    : super(key: key);
+  const NotificationsScreen({super.key, required this.ouvrierId});
 
   @override
   State<NotificationsScreen> createState() => _NotificationsScreenState();

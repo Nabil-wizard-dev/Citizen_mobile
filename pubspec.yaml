@@ -17,24 +17,26 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   shared_preferences: ^2.2.2
-  http: ^0.13.6
+  http: ^1.5.0
   http_parser: ^4.0.2
   image_picker: ^1.0.4
   record: ^6.0.0
   path_provider: ^2.0.15
-  google_fonts: ^4.0.4
-  animate_do: ^3.0.2
-  lottie: ^2.3.2
-  flutter_local_notifications: ^18.0.1
+  google_fonts: ^6.3.1
+  animate_do: ^4.2.0
+  lottie: ^3.3.1
+  flutter_local_notifications: ^19.4.1
   flutter_native_splash: ^2.3.6
-  geolocator: ^10.1.0
+  geolocator: ^14.0.2
   url_launcher: ^6.1.7
   pdf: ^3.10.4
   printing: ^5.11.0
   open_file: ^3.3.2
-  flutter_chat_ui: ^1.6.6
+  flutter_chat_ui: ^2.9.0
   flutter_chat_types: ^3.4.2
+  path: ^1.8.0
 
+  uuid: any
 dev_dependencies:
   flutter_test:
     sdk: flutter

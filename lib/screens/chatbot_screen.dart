@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:uuid/uuid.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:math';
-import 'package:flutter/scheduler.dart';
 
 class ChatbotScreen extends StatefulWidget {
-  const ChatbotScreen({Key? key}) : super(key: key);
+  const ChatbotScreen({super.key});
 
   @override
   State<ChatbotScreen> createState() => _ChatbotScreenState();
@@ -22,7 +19,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> with SingleTickerProvider
   bool _isLoading = false;
   String? _openRouterApiKey;
   String _model = 'openrouter/auto';
-  List<Map<String, String>> _chatHistory = [];
+  final List<Map<String, String>> _chatHistory = [];
   bool _botTyping = false;
   late AnimationController _bgController;
   final TextEditingController _textController = TextEditingController();

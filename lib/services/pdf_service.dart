@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:path_provider/path_provider.dart';
@@ -163,8 +162,7 @@ class PdfService {
           pw.SizedBox(height: 12),
           _buildInfoRow('Nom complet', '${ouvrier.nom} ${ouvrier.prenom}'),
           _buildInfoRow('Email', ouvrier.email),
-          if (ouvrier.numero != null)
-            _buildInfoRow('Téléphone', ouvrier.numero.toString()),
+          _buildInfoRow('Téléphone', ouvrier.numero.toString()),
         ],
       ),
     );

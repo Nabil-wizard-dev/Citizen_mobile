@@ -427,7 +427,7 @@ class _SignalementDetailPageState extends State<SignalementDetailPage> {
                   ],
                 ),
               );
-            }).toList(),
+            }),
           ],
         ),
       ),

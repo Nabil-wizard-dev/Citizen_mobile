@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:http_parser/http_parser.dart';
 import '../../services/auth_service.dart';
 import '../models/tache.dart';
 
@@ -237,7 +236,7 @@ class TacheService {
       };
 
       final uri = Uri.parse(
-        '$baseUrl/signalements/${signalementId}/statut?statut=$newStatus',
+        '$baseUrl/signalements/$signalementId/statut?statut=$newStatus',
       );
       final response = await http.patch(uri, headers: headers);
 

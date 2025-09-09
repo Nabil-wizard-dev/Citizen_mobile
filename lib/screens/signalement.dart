@@ -178,7 +178,7 @@ class _SignalementPageState extends State<SignalementPage> {
       );
 
       if (result['success']) {
-        _showSnackBar('Signalement envoyé avec succès !');
+        _showSnackBar('Signalement envoyé avec succès !', false );
         _resetForm();
       } else {
         _showSnackBar(

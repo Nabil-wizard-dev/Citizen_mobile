@@ -1,24 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'dart:io';
 import '../../models/signalement.dart';
 import '../../models/user.dart';
 import '../models/tache.dart' hide Signalement;
 import '../services/tache_service.dart';
-import 'dart:ui';
 import 'package:url_launcher/url_launcher.dart';
 import 'creation_devis.dart';
-import 'rapport_avancement_screen.dart';
 
 class SignalementDetailScreen extends StatefulWidget {
   final Signalement signalement;
   final User user;
 
   const SignalementDetailScreen({
-    Key? key,
+    super.key,
     required this.signalement,
     required this.user,
-  }) : super(key: key);
+  });
 
   @override
   _SignalementDetailScreenState createState() =>

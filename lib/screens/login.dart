@@ -1,11 +1,9 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:ppe_mobile/screens/signup.dart';
 import '../ouvrier/home_ouvrier.dart';
 import '../services/auth_service.dart';
 import 'home_screen.dart';
 import '../models/user.dart';
-import '../ouvrier/screens/home.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});

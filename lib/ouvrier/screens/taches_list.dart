@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../models/user.dart';
-import '../models/tache.dart';
-import '../services/tache_service.dart';
 import '../../models/signalement.dart' as model;
 import '../../services/signalement_service.dart';
 import 'signalement_detail.dart';
